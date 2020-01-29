@@ -1,18 +1,22 @@
 import {Entity, PrimaryGeneratedColumn, Column} from "typeorm";
+import { floralwhite } from "color-name";
 
 @Entity()
 export class User {
 
     @PrimaryGeneratedColumn()
-    id: number;
+    uid: number = 0; 
 
     @Column()
-    firstName: string;
+    username: string;
+
+    @Column({select : false})
+    password:string;
 
     @Column()
-    lastName: string;
+    isAdmin: boolean;
 
     @Column()
-    age: number;
+    displayName: string;
 
 }
