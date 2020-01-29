@@ -10,36 +10,6 @@ createConnection().then(async connection => {
     const router = new Router();
     const app = new koa();
     app.use(koaBody());
-    router.post('/todolist/authenticate', async (ctx, next) => {
-        var
-            name = ctx.request.body.name || '',
-            password = ctx.request.body.password || '';
-        console.log(`signin with name: ${name}, password: ${password}`);
-        if (name === 'koa' && password === '12345') {
-            ctx.response.body = `<h1>Welcome, ${name}!</h1>`;
-        } else {
-            ctx.response.body = `<h1>Login failed!</h1>
-            <p><a href="/">Try again</a></p>`;
-        }
-    });
-    router.get('/users', async(ctx, next) => {
-    
-    });
-    router.get('/users', async(ctx, next) => {
-    
-    });
-    router.get('/users', async(ctx, next) => {
-    
-    });
-    router.get('/users', async(ctx, next) => {
-    
-    });
-    router.get('/users', async(ctx, next) => {
-    
-    });
-    router.get('/users', async(ctx, next) => {
-    
-    });
     router.get('/users', async(ctx, next) => {
         let user  = new User();
         let userRepository = connection.getRepository(User);
@@ -61,4 +31,17 @@ createConnection().then(async connection => {
         ctx.body = JSON.stringify(ctx.request.body);
         ctx.type = 'application/json';
     });
+
+    app
+    .use(router.routes())
+    .use(router.allowedMethods());
+
+    app.use(async (ctx : any) => {
+        ctx.status = 404;
+        ctx.body = "ERR";
+      });
+    
+      app.listen(3000);
+    
+  
 }).catch(error => console.log(error));
