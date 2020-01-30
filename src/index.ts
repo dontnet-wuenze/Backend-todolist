@@ -1,6 +1,7 @@
 import "reflect-metadata";
 import {createConnection} from "typeorm";
 import {User} from "./entity/User";
+import{Event}from "./entity/Event";
 import { runInNewContext } from "vm";
 import e = require("express");
 
@@ -12,11 +13,38 @@ createConnection().then(async connection => {
     const router = new Router();
     const app = new koa();
     app.use(koaBody());
-    router.get('/users', async(ctx, next) => {
-        let user  = new User();
+    
+    router.post('todolist/authenticate', async(ctx, next) => {
+
+    })
+    
+    router.get('todolist/items',  async(ctx, next) => {
+        let eventRepository = connection.getRepository(Event);
+        let Allevents = await eventRepository.find();
+        ctx.body = JSON.stringify(Allevents);
+        ctx.type = 'application/json';
+    })
+
+    router.post('todolist/items', async(ctx, next) => {
+
+    })
+
+    router.get('todolist/items/:id', async(ctx, next) => {
+        let eventRepository = connection.getRepository(Event);
+        let event = await eventRepository.findOne(ctx.params.id);
+        if(event == undefined) {
+            ctx.status = 404;
+            ctx.body = '{"status":"Item not found"}';
+        } else {
+            ctx.body = JSON.stringify(event);
+        }
+        ctx.type = 'application/json';
+    })
+
+    router.get('/users', async(ctx, next) => { 
         let userRepository = connection.getRepository(User);
         let Allusers = await userRepository.find();
-        ctx.body = JSON.stringify(Object.values(Allusers));
+        ctx.body = JSON.stringify(Allusers);
         ctx.type = 'application/json';
     });
 
@@ -54,6 +82,13 @@ createConnection().then(async connection => {
         ctx.body = JSON.stringify(ctx.request.body);
         ctx.type = 'application/json';
     });
+
+    router.get('/users/:uid', async(ctx, next) => {
+        let  userRepository = connection.getRepository(User);
+        let user = await userRepository.findOne(ctx.params.uid);
+        ctx.body = JSON.stringify(user);
+        ctx.type = 'application/json';
+    })
 
     router.delete('/users/:uid', async(ctx, next) => {
         let userRepository = connection.getRepository(User);
