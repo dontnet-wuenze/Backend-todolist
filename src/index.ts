@@ -1,6 +1,8 @@
 import "reflect-metadata";
 import {createConnection} from "typeorm";
 import {User} from "./entity/User";
+import { runInNewContext } from "vm";
+import e = require("express");
 
 
 createConnection().then(async connection => {
@@ -17,6 +19,7 @@ createConnection().then(async connection => {
         ctx.body = JSON.stringify(Allusers);
         ctx.type = 'application/json';
     });
+
     router.post('/users', async(ctx, next) => {
         for(let user of ctx.request.body) {
             if(user.isAdmin === undefined) {
@@ -25,12 +28,40 @@ createConnection().then(async connection => {
             if(user.displayName == undefined) {
                 user.displayName  = user.username;
             }
-            let userRepsoitory = connection.getRepository(User);
-            userRepsoitory.insert(user);
+            let userRepository = connection.getRepository(User);
+            await userRepository.insert(user);
         }
         ctx.body = JSON.stringify(ctx.request.body);
         ctx.type = 'application/json';
     });
+
+    router.delete('/users/:uid', async(ctx, next) => {
+        let userRepository = connection.getRepository(User);
+        let user = await userRepository.findOne(ctx.params.uid);
+        if(user == undefined) {
+            ctx.status = 404;
+            ctx.body = '{"status":"Item not found"}';
+            ctx.type = 'application/json';
+        } else {
+                await userRepository.remove(user);
+                ctx.status = 204;
+        }
+    })
+
+    router.patch('/users/:uid', async(ctx, next) =>{
+        let userRepository = connection.getRepository(User);
+        let user = await userRepository.findOne(ctx.params.uid);
+        let body = ctx.request.body;
+        if(user == undefined) {
+            ctx.status = 404;
+            ctx.body = '{"status": "item not found"}';
+        } else {
+            await userRepository.update(user, body);
+            user = await userRepository.findOne(ctx.params.uid);
+            ctx.body = JSON.stringify(user);
+        }
+        ctx.type = "application/json";
+    })
 
     app
     .use(router.routes())
@@ -45,3 +76,4 @@ createConnection().then(async connection => {
     
   
 }).catch(error => console.log(error));
+ 
