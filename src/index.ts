@@ -16,9 +16,28 @@ createConnection().then(async connection => {
         let user  = new User();
         let userRepository = connection.getRepository(User);
         let Allusers = await userRepository.find();
-        ctx.body = JSON.stringify(Allusers);
+        ctx.body = JSON.stringify(Object.values(Allusers));
         ctx.type = 'application/json';
     });
+
+    router.get('/addusers', async(ctx, next) => {
+        ctx.response.body = `<h1>add new user</h1>
+        <form action="/addusers" method="post">
+            <p>Name: <input name="username"></p>
+            <p>Password: <input name="password" type="password"></p>
+            <p>isAdmin: <input name="isAdmin" type="boolean"></p>
+            <p>displayName: <input name="displayName" ></p>
+            <p><input type="submit" value="Submit"></p>
+        </form>`;
+    })
+
+    router.post('/addusers', async(ctx, next) => {
+        let user = ctx.request.body;
+        let userRepository = connection.getRepository(User);
+        await userRepository.insert(user);
+        ctx.body = JSON.stringify(user);
+        ctx.type = 'application/json';
+    })
 
     router.post('/users', async(ctx, next) => {
         for(let user of ctx.request.body) {
@@ -28,6 +47,7 @@ createConnection().then(async connection => {
             if(user.displayName == undefined) {
                 user.displayName  = user.username;
             }
+            console.log(user);
             let userRepository = connection.getRepository(User);
             await userRepository.insert(user);
         }
