@@ -24,7 +24,7 @@ var addusers_post = async async(ctx, next) => {
     ctx.type = 'application/json';
 }
 
-router.post('/users', async(ctx, next) => {
+var users_post = async(ctx, next) => {
     for(let user of ctx.request.body) {
         if(user.isAdmin === undefined) {
             user.isAdmin = false;
@@ -38,16 +38,16 @@ router.post('/users', async(ctx, next) => {
     }
     ctx.body = JSON.stringify(ctx.request.body);
     ctx.type = 'application/json';
-});
+}
 
-router.get('/users/:uid', async(ctx, next) => {
+var users_uid_get = async(ctx, next) => {
     let  userRepository = connection.getRepository(User);
     let user = await userRepository.findOne(ctx.params.uid);
     ctx.body = JSON.stringify(user);
     ctx.type = 'application/json';
-})
+}
 
-router.delete('/users/:uid', async(ctx, next) => {
+var users_uid_delete = async(ctx, next) => {
     let userRepository = connection.getRepository(User);
     let user = await userRepository.findOne(ctx.params.uid);
     if(user == undefined) {
@@ -58,9 +58,9 @@ router.delete('/users/:uid', async(ctx, next) => {
             await userRepository.remove(user);
             ctx.status = 204;
     }
-})
+}
 
-router.patch('/users/:uid', async(ctx, next) =>{
+var users_uid_patch = async(ctx, next) =>{
     let userRepository = connection.getRepository(User);
     let user = await userRepository.findOne(ctx.params.uid);
     let body = ctx.request.body;
@@ -73,14 +73,15 @@ router.patch('/users/:uid', async(ctx, next) =>{
         ctx.body = JSON.stringify(user);
     }
     ctx.type = "application/json";
-})
+}
 
 
 module.exports = {
     'GET /users': users_get;
     'POST /users': users_post;
-    'GET /users': users_get;
-    'GET /users': users_get;
-    'GET /users': users_get;
-    'GET /users': users_get;
+    'GET /addusers': addusers_get;
+    'POST /addusers': addusers_post;
+    'GET /users/:uid': users_uid_get;
+    'DELETE /users/:uid': users_uid_delete;
+    'PATCH /users/:uid': users_uid_patch;
 };
