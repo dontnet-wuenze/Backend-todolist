@@ -1,5 +1,10 @@
+import "reflect-metadata";
+import {getRepository} from "typeorm";
+import {User} from "../entity/User";
+
+
 var users_get =  async(ctx, next) => { 
-    let userRepository = connection.getRepository(User);
+    let userRepository = getRepository(User);
     let Allusers = await userRepository.find();
     ctx.body = JSON.stringify(Allusers);
     ctx.type = 'application/json';
@@ -16,9 +21,9 @@ var addusers_get =  async(ctx, next) => {
     </form>`;
 }
 
-var addusers_post = async async(ctx, next) => {
+var addusers_post = async (ctx, next) => {
     let user = ctx.request.body;
-    let userRepository = connection.getRepository(User);
+    let userRepository = getRepository(User);
     await userRepository.insert(user);
     ctx.body = JSON.stringify(user);
     ctx.type = 'application/json';
@@ -33,7 +38,7 @@ var users_post = async(ctx, next) => {
             user.displayName  = user.username;
         }
         console.log(user);
-        let userRepository = connection.getRepository(User);
+        let userRepository = getRepository(User);
         await userRepository.insert(user);
     }
     ctx.body = JSON.stringify(ctx.request.body);
@@ -41,14 +46,14 @@ var users_post = async(ctx, next) => {
 }
 
 var users_uid_get = async(ctx, next) => {
-    let  userRepository = connection.getRepository(User);
+    let  userRepository = getRepository(User);
     let user = await userRepository.findOne(ctx.params.uid);
     ctx.body = JSON.stringify(user);
     ctx.type = 'application/json';
 }
 
 var users_uid_delete = async(ctx, next) => {
-    let userRepository = connection.getRepository(User);
+    let userRepository = getRepository(User);
     let user = await userRepository.findOne(ctx.params.uid);
     if(user == undefined) {
         ctx.status = 404;
@@ -61,7 +66,7 @@ var users_uid_delete = async(ctx, next) => {
 }
 
 var users_uid_patch = async(ctx, next) =>{
-    let userRepository = connection.getRepository(User);
+    let userRepository = getRepository(User);
     let user = await userRepository.findOne(ctx.params.uid);
     let body = ctx.request.body;
     if(user == undefined) {
@@ -80,7 +85,7 @@ module.exports = {
     'GET /users': users_get;
     'POST /users': users_post;
     'GET /addusers': addusers_get;
-    'POST /addusers': addusers_post;
+    'POST /addusers': addusers_post; 
     'GET /users/:uid': users_uid_get;
     'DELETE /users/:uid': users_uid_delete;
     'PATCH /users/:uid': users_uid_patch;
