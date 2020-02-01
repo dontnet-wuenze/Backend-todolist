@@ -2,7 +2,8 @@ import "reflect-metadata";
 import {getRepository} from "typeorm";
 import {Event} from "../entity/Event";
 import{User} from "../entity/User";
-
+const koa = require("koa");
+const koaBody = require('koa-body');
 
 var authenticate_post = async(ctx, next) => {
     let userRepository = getRepository(User);
@@ -84,10 +85,10 @@ ctx.type = 'application/json';
 
 
 module.exports = {
-    'POST /todolist/authenticate': authenticate_post;
-    'POST /todolist/items': items_post;
-    'GET /todolist/items': items_get;
-    'GET /todolist/items/id': items_id_get;
-    'DELETE /todolist/items/id': items_id_delete;
-    'PUT /todolist/items/id': items_id_put;
+    'POST /todolist/authenticate': authenticate_post,
+    'POST /todolist/items': items_post,
+    'GET /todolist/items': items_get,
+    'GET /todolist/items/id': items_id_get,
+    'DELETE /todolist/items/id': items_id_delete,
+    'PUT /todolist/items/id': items_id_put,
 };

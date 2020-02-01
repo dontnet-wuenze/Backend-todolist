@@ -1,14 +1,15 @@
 import "reflect-metadata";
 import {getRepository} from "typeorm";
 import {User} from "../entity/User";
-
+const koa = require("koa");
+const koaBody = require('koa-body');
 
 var users_get =  async(ctx, next) => { 
     let userRepository = getRepository(User);
     let Allusers = await userRepository.find();
     ctx.body = JSON.stringify(Allusers);
     ctx.type = 'application/json';
-});
+}
 
 var addusers_get =  async(ctx, next) => {
     ctx.response.body = `<h1>add new user</h1>
@@ -16,7 +17,7 @@ var addusers_get =  async(ctx, next) => {
         <p>Name: <input name="username"></p>
         <p>Password: <input name="password" type="password"></p>
         <p>isAdmin: <input name="isAdmin" type="boolean"></p>
-        <p>displayName: <input name="displayName" ></p>
+        <p>displayName: <input name="displayName" ></p>git 
         <p><input type="submit" value="Submit"></p>
     </form>`;
 }
@@ -82,11 +83,11 @@ var users_uid_patch = async(ctx, next) =>{
 
 
 module.exports = {
-    'GET /users': users_get;
-    'POST /users': users_post;
-    'GET /addusers': addusers_get;
-    'POST /addusers': addusers_post; 
-    'GET /users/:uid': users_uid_get;
-    'DELETE /users/:uid': users_uid_delete;
-    'PATCH /users/:uid': users_uid_patch;
+    'GET /users': users_get,
+    'POST /users': users_post,
+    'GET /addusers': addusers_get,
+    'POST /addusers': addusers_post, 
+    'GET /users/:uid': users_uid_get ,
+    'DELETE /users/:uid': users_uid_delete,
+    'PATCH /users/:uid': users_uid_patch
 };
